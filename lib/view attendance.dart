@@ -110,7 +110,7 @@ class _ViewAttendanceState extends State<ViewAttendance> {
       SharedPreferences sh = await SharedPreferences.getInstance();
       String urls = sh.getString('url').toString();
       String lid = sh.getString('lid').toString();
-      String url = '$urls/myapp/user_viewreply/';
+      String url = '$urls/myapp/view_attendance/';
 
       var data = await http.post(Uri.parse(url), body: {
 

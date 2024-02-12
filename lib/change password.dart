@@ -92,7 +92,7 @@ class _ChangePasswordState extends State<ChangePassword> {
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
 
-    final urls = Uri.parse('$url/user_loginpost/');
+    final urls = Uri.parse('$url/change_password_student/');
     try {
       final response = await http.post(urls, body: {
         'current':currentcontroller.text,

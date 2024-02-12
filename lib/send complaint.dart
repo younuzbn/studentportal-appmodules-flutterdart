@@ -81,7 +81,7 @@ class _SendComplaintState extends State<SendComplaint> {
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
 
-    final urls = Uri.parse('$url/user_loginpost/');
+    final urls = Uri.parse('$url/send_complaint/');
     try {
       final response = await http.post(urls, body: {
         'Comnplaint':complaint.text,

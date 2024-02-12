@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studentsportal/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,6 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 SharedPreferences sh = await SharedPreferences.getInstance();
                 sh.setString("url", "http//:"+ipaddress.text+":8000/myapp").toString();
                 sh.setString("imageurl", "http//:"+ipaddress.text+":8000").toString();
+
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyLoginPage(title: "Home"),));
+                Fluttertoast.showToast(msg: 'hhhh');
+
               }, child: Text('connect'))
             ],
           ),

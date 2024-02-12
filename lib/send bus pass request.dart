@@ -103,7 +103,7 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
 
-    final urls = Uri.parse('$url/user_loginpost/');
+    final urls = Uri.parse('$url/send_bus_pass_request/');
     try {
       final response = await http.post(urls, body: {
         'department':department.text,

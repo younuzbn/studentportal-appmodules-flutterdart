@@ -91,7 +91,7 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
 
-    final urls = Uri.parse('$url/user_loginpost/');
+    final urls = Uri.parse('$url/send_id_card_request/');
     try {
       final response = await http.post(urls, body: {
         'department':department.text,

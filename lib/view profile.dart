@@ -76,7 +76,7 @@ class _ViewProfileState extends State<ViewProfile> {
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
 
-    final urls = Uri.parse('$url/myapp/user_viewprofile/');
+    final urls = Uri.parse('$url/myapp/view_profile_student/');
     try {
       final response = await http.post(urls, body: {
         'lid':lid

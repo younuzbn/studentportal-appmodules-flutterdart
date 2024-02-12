@@ -67,7 +67,10 @@ TextEditingController password=new TextEditingController();
               decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Password')),
             ),
             SizedBox(height: 15,),
-            ElevatedButton(onPressed: (){_send_data();}, child: Text('Login'))
+            ElevatedButton(onPressed: (){_send_data();
+
+
+              }, child: Text('Login'))
           ],
         ),
       ),
@@ -81,7 +84,7 @@ void _send_data() async{
   SharedPreferences sh = await SharedPreferences.getInstance();
   String url = sh.getString('url').toString();
 
-  final urls = Uri.parse('$url/user_loginpost/');
+  final urls = Uri.parse('$url/login_student/');
   try {
     final response = await http.post(urls, body: {
       'username':username.text,
@@ -93,7 +96,7 @@ void _send_data() async{
       String status = jsonDecode(response.body)['status'];
       if (status=='ok') {
 
-        String lid=jsonDecode(response.body)['lid'];
+        String lid=jsonDecode(response.body)['lid'].toString();
         sh.setString("lid", lid);
 
         Navigator.push(context, MaterialPageRoute(
