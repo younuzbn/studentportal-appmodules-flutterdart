@@ -109,7 +109,7 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
       SharedPreferences sh = await SharedPreferences.getInstance();
       String urls = sh.getString('url').toString();
       String lid = sh.getString('lid').toString();
-      String url = '$urls/myapp/view_club_request_status/';
+      String url = '$urls/view_club_request_status/';
 
       var data = await http.post(Uri.parse(url), body: {
 

@@ -63,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(height: 15,),
               ElevatedButton(onPressed: () async {
                 SharedPreferences sh = await SharedPreferences.getInstance();
-                sh.setString("url", "http//:"+ipaddress.text+":8000/myapp").toString();
-                sh.setString("imageurl", "http//:"+ipaddress.text+":8000").toString();
+                sh.setString("url", "http://"+ipaddress.text+":8000/myapp").toString();
+                sh.setString("imageurl", "http://"+ipaddress.text+":8000").toString();
 
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) => MyLoginPage(title: "Home"),));

@@ -1,4 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:studentsportal/send%20bus%20pass%20request.dart';
+import 'package:studentsportal/send%20complaint.dart';
+import 'package:studentsportal/send%20id%20card%20request.dart';
+import 'package:studentsportal/view%20attendance.dart';
+import 'package:studentsportal/view%20club%20request%20status.dart';
+import 'package:studentsportal/view%20club.dart';
+import 'package:studentsportal/view%20profile.dart';
+import 'package:studentsportal/view%20reply.dart';
+
+import 'change password.dart';
+import 'login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,6 +77,7 @@ class _pagenewState extends State<pagenew> {
             ),
              ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewProfile(title: 'profile',)));
 
               },
               title: Text("View profile"),
@@ -73,6 +85,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SendBusPassRequest(title: 'Send Bus Pass Request',)));
 
               },
               title: Text("Send Bus Pass Request"),
@@ -80,6 +93,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SendIdCardRequest(title: 'Send Id Card Request',)));
 
               },
               title: Text("Send Id Card Request"),
@@ -87,6 +101,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewClub(title: 'Join Club',)));
 
               },
               title: Text("Join Club"),
@@ -94,6 +109,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewClubRequestStatus(title: 'View Club Request Status',)));
 
               },
               title: Text("Membership Status"),
@@ -101,6 +117,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewAttendance(title: 'View Attendance',)));
 
               },
               title: Text("View Attendance"),
@@ -108,6 +125,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SendComplaint(title: 'Send Complaint',)));
 
               },
               title: Text("Send Complaint"),
@@ -115,6 +133,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewReply(title: 'View Reply',)));
 
               },
               title: Text("View Reply"),
@@ -122,6 +141,7 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ChangePassword(title: 'Change Password',)));
 
               },
               title: Text("Change Password"),
@@ -129,6 +149,8 @@ class _pagenewState extends State<pagenew> {
             ),
               ListTile(
               onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>MyLoginPage(title: 'MyLoginPage',)));
+
 
               },
               title: Text("Logout"),
@@ -138,23 +160,7 @@ class _pagenewState extends State<pagenew> {
           ],
         ),
       ),
-      body: Center(
-
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-             TextFormField(
-               controller: ipaddress,
-               decoration: InputDecoration(border: OutlineInputBorder(),label: Text('ip address')),
-             ),
-              SizedBox(height: 15,),
-              ElevatedButton(onPressed: (){}, child: Text('connect'))
-            ],
-          ),
-        ),
-      ),
+      body: Text("")
 
     );
   }

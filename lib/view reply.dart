@@ -117,7 +117,7 @@ class _ViewReplyState extends State<ViewReply> {
       SharedPreferences sh = await SharedPreferences.getInstance();
       String urls = sh.getString('url').toString();
       String lid = sh.getString('lid').toString();
-      String url = '$urls/myapp/view_complaint_reply/';
+      String url = '$urls/view_complaint_reply/';
 
       var data = await http.post(Uri.parse(url), body: {
 

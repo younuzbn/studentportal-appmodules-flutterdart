@@ -53,7 +53,22 @@ class _ViewProfileState extends State<ViewProfile> {
 
         title: Text(widget.title),
       ),
-      body: Text("")
+      body: Column(
+        children: [
+          Text(name_),
+          CircleAvatar(
+            backgroundImage: NetworkImage(photo_),
+          ),
+          Text(house_name_),
+          Text(street_),
+          Text(pin_),
+          Text(post_),
+          Text(register_number_),
+          Text(date_of_birth_),
+          Text(phone_no_),
+          Text(email_id_)
+        ],
+      )
 
     );
   }
@@ -75,8 +90,9 @@ class _ViewProfileState extends State<ViewProfile> {
     SharedPreferences sh = await SharedPreferences.getInstance();
     String url = sh.getString('url').toString();
     String lid = sh.getString('lid').toString();
+    String imageurl = sh.getString('imageurl').toString();
 
-    final urls = Uri.parse('$url/myapp/view_profile_student/');
+    final urls = Uri.parse('$url/view_profile_student/');
     try {
       final response = await http.post(urls, body: {
         'lid':lid
@@ -88,15 +104,15 @@ class _ViewProfileState extends State<ViewProfile> {
         String status = jsonDecode(response.body)['status'];
         if (status=='ok') {
           String name=jsonDecode(response.body)['name'];
-          String photo=jsonDecode(response.body)['dob'];
-          String house_name=jsonDecode(response.body)['gender'];
-          String street=jsonDecode(response.body)['email'];
-          String pin=jsonDecode(response.body)['phone'];
-          String post=jsonDecode(response.body)['place'];
-          String register_number=jsonDecode(response.body)['post'];
-          String date_of_birth=jsonDecode(response.body)['pin'];
-          String phone_no=jsonDecode(response.body)['district'];
-          String email_id=url+jsonDecode(response.body)['photo'];
+          String photo=imageurl+jsonDecode(response.body)['photo'];
+          String house_name=jsonDecode(response.body)['house_name'];
+          String street=jsonDecode(response.body)['street'];
+          String pin=jsonDecode(response.body)['pin'];
+          String post=jsonDecode(response.body)['post'];
+          String register_number=jsonDecode(response.body)['register_number'];
+          String date_of_birth=jsonDecode(response.body)['date_of_birth'];
+          String phone_no=jsonDecode(response.body)['phone_number'];
+          String email_id=jsonDecode(response.body)['email_id'];
 
           setState(() {
 

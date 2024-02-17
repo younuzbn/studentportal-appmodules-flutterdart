@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart'as http;
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'home.dart';
 import 'login.dart';
 
 void main() {
@@ -56,39 +60,59 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
 
         title: Text(widget.title),
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        child: Center(
+        
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                if (_selectedImage != null) ...{
+                  InkWell(
+                    child:
+                    Image.file(_selectedImage!, height: 400,),
+                    radius: 399,
+                    onTap: _checkPermissionAndChooseImage,
+                    // borderRadius: BorderRadius.all(Radius.circular(200)),
+                  ),
+                } else ...{
+                  // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
+                  InkWell(
+                    onTap: _checkPermissionAndChooseImage,
+                    child:Column(
+                      children: [
+                        Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
+                        Text('Select Image',style: TextStyle(color: Colors.cyan))
+                      ],
+                    ),
+                  ),
+                },
+               TextFormField(
+                 controller: department,
+                 decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Department')),
+               ),
+                SizedBox(height: 15,),
+                TextFormField(
+                  controller: fromlocation,
+                  decoration: InputDecoration(border: OutlineInputBorder(),label: Text('From Location')),
+                ),
+                SizedBox(height: 15,),
+                TextFormField(
+                  controller: tolocation,
+                  decoration: InputDecoration(border: OutlineInputBorder(),label: Text('To Location')),
+                ),
+                SizedBox(height: 15,),
+                TextFormField(
+                  controller: academicyear,
+                  decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
+                ),
+                SizedBox(height: 15,),
 
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-             TextFormField(
-               controller: department,
-               decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Department')),
-             ),
-              SizedBox(height: 15,),
-              TextFormField(
-                controller: fromlocation,
-                decoration: InputDecoration(border: OutlineInputBorder(),label: Text('From Location')),
-              ),
-              SizedBox(height: 15,),
-              TextFormField(
-                controller: tolocation,
-                decoration: InputDecoration(border: OutlineInputBorder(),label: Text('To Location')),
-              ),
-              SizedBox(height: 15,),
-              TextFormField(
-                controller: academicyear,
-                decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
-              ),
-              SizedBox(height: 15,),
-              TextFormField(
-                decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Photo')),
-              ),
-              SizedBox(height: 15,),
-              ElevatedButton(onPressed: (){_send_data();}, child: Text('Send Bus Pass Request'))
-            ],
+
+                ElevatedButton(onPressed: (){_send_data();}, child: Text('Send Bus Pass Request'))
+              ],
+            ),
           ),
         ),
       ),
@@ -107,10 +131,10 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
     try {
       final response = await http.post(urls, body: {
         'department':department.text,
-        'fromlocation':fromlocation.text,
-        'tolocation':tolocation.text,
-        'academicyear':academicyear.text,
-        'photo':"",
+        'f_place':fromlocation.text,
+        'to_place':tolocation.text,
+        'academic_year':academicyear.text,
+        'file':photo,
         'lid':lid,
 
 
@@ -121,7 +145,7 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
 
 
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MyLoginPage(title: "Home"),));
+            builder: (context) => pagenew(title: "Home"),));
         }else {
           Fluttertoast.showToast(msg: 'Not Found');
         }
@@ -134,4 +158,43 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
       Fluttertoast.showToast(msg: e.toString());
     }
   }
+  File? _selectedImage;
+  String? _encodedImage;
+  Future<void> _chooseAndUploadImage() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+        _encodedImage = base64Encode(_selectedImage!.readAsBytesSync());
+        photo = _encodedImage.toString();
+      });
+    }
+  }
+
+  Future<void> _checkPermissionAndChooseImage() async {
+    final PermissionStatus status = await Permission.mediaLibrary.request();
+    if (status.isGranted) {
+      _chooseAndUploadImage();
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Permission Denied'),
+          content: const Text(
+            'Please go to app settings and grant permission to choose an image.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  String photo = '';
 }
