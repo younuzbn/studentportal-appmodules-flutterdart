@@ -112,7 +112,7 @@ class _ViewClubState extends State<ViewClub> {
       SharedPreferences sh = await SharedPreferences.getInstance();
       String urls = sh.getString('url').toString();
       String lid = sh.getString('lid').toString();
-      String url = '$urls/join_club/';
+      String url = '$urls/view_club_student/';
 
       var data = await http.post(Uri.parse(url), body: {
 
@@ -128,9 +128,9 @@ class _ViewClubState extends State<ViewClub> {
 
       for (int i = 0; i < arr.length; i++) {
         id.add(arr[i]['id'].toString());
-        name.add(arr[i]['date']);
-        logo.add(arr[i]['complaint']);
-        description.add(arr[i]['reply']);
+        name.add(arr[i]['name'].toString());
+        logo.add(arr[i]['logo'].toString());
+        description.add(arr[i]['description'].toString());
       }
 
       setState(() {

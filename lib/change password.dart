@@ -95,9 +95,9 @@ class _ChangePasswordState extends State<ChangePassword> {
     final urls = Uri.parse('$url/change_password_student/');
     try {
       final response = await http.post(urls, body: {
-        'current':currentcontroller.text,
-        'new':newcontroller.text,
-        'confirm':confirmcontroller.text,
+        'current_password':currentcontroller.text,
+        'new_password':newcontroller.text,
+        'confirm_password':confirmcontroller.text,
         'lid':lid,
 
 

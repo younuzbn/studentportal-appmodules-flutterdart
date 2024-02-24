@@ -84,7 +84,7 @@ class _SendComplaintState extends State<SendComplaint> {
     final urls = Uri.parse('$url/send_complaint/');
     try {
       final response = await http.post(urls, body: {
-        'Comnplaint':complaint.text,
+        'complaint':complaint.text,
         'lid':lid,
 
 

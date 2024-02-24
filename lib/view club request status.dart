@@ -125,9 +125,9 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
 
       for (int i = 0; i < arr.length; i++) {
         id.add(arr[i]['id'].toString());
-        date.add(arr[i]['date']);
-        CLUB.add(arr[i]['club']);
-        Status.add(arr[i]['stat']);
+        date.add(arr[i]['date'].toString());
+        CLUB.add(arr[i]['CLUB'].toString());
+        Status.add(arr[i]['status'].toString());
       }
 
       setState(() {
