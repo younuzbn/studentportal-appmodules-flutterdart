@@ -53,7 +53,7 @@ class _pagenewState extends State<pagenew> {
     return Scaffold(
       appBar: AppBar(
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
 
         title: Text(widget.title),
       ),

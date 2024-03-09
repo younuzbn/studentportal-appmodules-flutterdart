@@ -45,65 +45,75 @@ class _ViewAttendanceState extends State<ViewAttendance> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: ()async{
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title),
-      ),
-      body:  ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: id_.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Card(
-                      child:
-                      Row(
-                          children: [
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(date_[index]),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(subject_[index]),
-                                ),    Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(day_[index]),
-                                ),
-                              ],
-                            ),
+          title: Text(widget.title),
+        ),
+        body:  ListView.builder(
+          physics: BouncingScrollPhysics(),
+          itemCount: id_.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Card(
+                        child:
+                        Row(
+                            children: [
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(date_[index]),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(subject_[index]),
+                                  ),    Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(hour_[index]),
+                                  ),Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(status_[index]),
+                                  ),
+                                ],
+                              ),
 
-                          ]
+                            ]
+                        ),
+
+                        elevation: 8,
                       ),
+                    ],
+                  )),
+            );
+          },
+        ),
 
-                      elevation: 8,
-                    ),
-                  ],
-                )),
-          );
-        },
       ),
-
     );
   }
   List<String> id_=<String>[];
   List<String> subject_=<String>[];
   List<String> date_=<String>[];
-  List<String> day_=<String>[];
+  List<String> hour_=<String>[];
+  List<String> status_=<String>[];
 
   Future<void> viewreply() async {
     List<String> id=<String>[];
     List<String> subject=<String>[];
     List<String> date=<String>[];
-    List<String> day=<String>[];
+    List<String> hour=<String>[];
+    List<String> status=<String>[];
 
 
     try {
@@ -126,16 +136,18 @@ class _ViewAttendanceState extends State<ViewAttendance> {
 
       for (int i = 0; i < arr.length; i++) {
         id.add(arr[i]['id'].toString());
-        subject.add(arr[i]['date']);
-        date.add(arr[i]['complaint']);
-        day.add(arr[i]['reply']);
+        subject.add(arr[i]['subject']);
+        date.add(arr[i]['date']);
+        hour.add(arr[i]['hour']);
+        status.add(arr[i]['status']);
       }
 
       setState(() {
         id_ = id;
         subject_ = subject;
         date_ = date;
-        day_ = day;
+        hour_ = hour;
+        status_ = status;
       });
 
       print(statuss);

@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studentsportal/styles/app_colors.dart';
 
+import 'home.dart';
 import 'login.dart';
 
 void main() {
@@ -46,63 +48,92 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
   TextEditingController department=new TextEditingController();
   TextEditingController academicyear=new TextEditingController();
 
+  _SendIdCardRequestState(){
+    viewreply();
+  }
+
 
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: ()async{
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor:Colors.white,
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-        
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (_selectedImage != null) ...{
-                  InkWell(
-                    child:
-                    Image.file(_selectedImage!, height: 400,),
-                    radius: 399,
-                    onTap: _checkPermissionAndChooseImage,
-                    // borderRadius: BorderRadius.all(Radius.circular(200)),
-                  ),
-                } else ...{
-                  // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
-                  InkWell(
-                    onTap: _checkPermissionAndChooseImage,
-                    child:Column(
-                      children: [
-                        Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
-                        Text('Select Image',style: TextStyle(color: Colors.cyan))
-                      ],
+          title: Text(widget.title),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            color: AppColors.my_white,
+            child: Center(
+
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if (_selectedImage != null) ...{
+                      InkWell(
+                        child:
+                        Image.file(_selectedImage!, height: 400,),
+                        radius: 399,
+                        onTap: _checkPermissionAndChooseImage,
+                        // borderRadius: BorderRadius.all(Radius.circular(200)),
+                      ),
+                    } else ...{
+                      // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
+                      InkWell(
+                        onTap: _checkPermissionAndChooseImage,
+                        child:Column(
+                          children: [
+                            Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
+                            Text('Select Image',style: TextStyle(color: Colors.cyan))
+                          ],
+                        ),
+                      ),
+                    },
+                    DropdownMenu<String>(
+                      initialSelection: department_.first,
+                      onSelected: (String? value) {
+                        // This is called when the user selects an item.
+                        setState(() {
+
+                          selectedvalue = id_[department_.indexOf(value!)].toString();
+                          department.text = selectedvalue;
+                        });
+                      },
+                      dropdownMenuEntries: department_.map<DropdownMenuEntry<String>>((String value) {
+                        return DropdownMenuEntry<String>(value: value, label: value);
+                      }).toList(),
                     ),
-                  ),
-                },
-               TextFormField(
-                 controller: department,
-                 decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Department')),
-               ),
-                SizedBox(height: 15,),
-                TextFormField(
-                  controller: academicyear,
-                  decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
-                ),
+                    SizedBox(height: 15,),
+                    TextFormField(
+                      controller: academicyear,
+                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
+                    ),
 
-                SizedBox(height: 15,),
-                ElevatedButton(onPressed: (){_send_data();}, child: Text('Send Id Card Request'))
-              ],
+                    SizedBox(height: 15,),
+                    ElevatedButton(style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                      side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                    ), onPressed: (){_send_data();}, child: Text(
+                'Sent Request',
+                style: TextStyle(color: Colors.black), // Set text color to black
+              ),)
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ),
 
+      ),
     );
   }
   void _send_data() async{
@@ -116,7 +147,7 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
     final urls = Uri.parse('$url/send_id_card_request/');
     try {
       final response = await http.post(urls, body: {
-        'department':department.text.toString(),
+        'department':department.text,
         'academic_year':academicyear.text,
         'photo':photo,
         'lid':lid,
@@ -126,10 +157,11 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
       if (response.statusCode == 200) {
         String status = jsonDecode(response.body)['status'];
         if (status=='ok') {
+          Fluttertoast.showToast(msg: 'Request Sent Successfully');
 
 
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MyLoginPage(title: "Home"),));
+            builder: (context) => pagenew(title: "Home"),));
         }else {
           Fluttertoast.showToast(msg: 'Not Found');
         }
@@ -181,4 +213,49 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
   }
 
   String photo = '';
+
+  String selectedvalue = '';
+  List<String> id_=<String>[];
+  List<String> department_=<String>[];
+
+
+  Future<void> viewreply() async {
+    List<String> id=<String>[];
+    List<String> department=<String>[];
+
+
+    try {
+      SharedPreferences sh = await SharedPreferences.getInstance();
+      String urls = sh.getString('url').toString();
+      String lid = sh.getString('lid').toString();
+      String url = '$urls/view_department_student/';
+
+      var data = await http.post(Uri.parse(url), body: {
+
+        'lid':lid
+
+      });
+      var jsondata = json.decode(data.body);
+      String statuss = jsondata['status'];
+
+      var arr = jsondata["data"];
+
+      print(arr.length);
+
+      for (int i = 0; i < arr.length; i++) {
+        id.add(arr[i]['id'].toString());
+        department.add(arr[i]['department']);
+      }
+
+      setState(() {
+        id_ = id;
+        department_ = department;
+      });
+
+      print(statuss);
+    } catch (e) {
+      print("Error ------------------- " + e.toString());
+      //there is error during converting file image to base64 encoding.
+    }
+  }
 }

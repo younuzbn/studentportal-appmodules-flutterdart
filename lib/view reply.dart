@@ -45,57 +45,62 @@ class _ViewReplyState extends State<ViewReply> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: ()async{
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title),
-      ),
-      body:  ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: id_.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Card(
-                      child:
-                      Row(
-                          children: [
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(date_[index]),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(reply_[index]),
-                                ),    Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(status_[index]),
-                                ),  Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(complaint_[index]),
-                                ),
-                              ],
-                            ),
+          title: Text(widget.title),
+        ),
+        body:  ListView.builder(
+          physics: BouncingScrollPhysics(),
+          itemCount: id_.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Card(
+                        child:
+                        Row(
+                            children: [
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(date_[index]),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(reply_[index]),
+                                  ),    Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(status_[index]),
+                                  ),  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(complaint_[index]),
+                                  ),
+                                ],
+                              ),
 
-                          ]
+                            ]
+                        ),
+
+                        elevation: 8,
+                        margin: EdgeInsets.all(10),
                       ),
+                    ],
+                  )),
+            );
+          },
+        ),
 
-                      elevation: 8,
-                      margin: EdgeInsets.all(10),
-                    ),
-                  ],
-                )),
-          );
-        },
       ),
-
     );
   }
 

@@ -4,6 +4,9 @@ import 'package:http/http.dart'as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studentsportal/home.dart';
+import 'package:studentsportal/pages/home_page.dart';
+import 'package:studentsportal/styles/app_colors.dart';
 
 import 'login.dart';
 
@@ -21,7 +24,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
 
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
       home: const SendComplaint(title: 'Students Portal'),
@@ -46,31 +49,51 @@ class _SendComplaintState extends State<SendComplaint> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: ()async{
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.my_white,
+          leading: BackButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+            },
+          ),
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-        title: Text(widget.title),
-      ),
-      body: Center(
+          title: Text(widget.title),
+        ),
+        body: Container(
+          decoration: BoxDecoration(color: AppColors.my_white),
+          child: Center(
 
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-             TextFormField(
-               controller: complaint,
-               decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Complaint')),
-             ),
-              SizedBox(height: 15,),
-              ElevatedButton(onPressed: (){_send_data();}, child: Text('Send Complaint'))
-            ],
+
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                 TextFormField(
+                   controller: complaint,
+                   decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Enter Your Complaint')),
+                 ),
+                  SizedBox(height: 15,),
+                  ElevatedButton(onPressed: (){_send_data();},style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                    side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                  ), child: Text(
+                      'Send Complaint',
+                      style: TextStyle(color: Colors.black)))
+                ],
+              ),
+            ),
           ),
         ),
-      ),
 
+      ),
     );
   }
   void _send_data() async{
@@ -92,10 +115,10 @@ class _SendComplaintState extends State<SendComplaint> {
       if (response.statusCode == 200) {
         String status = jsonDecode(response.body)['status'];
         if (status=='ok') {
-
+          Fluttertoast.showToast(msg: 'Complaint Sent Successfully');
 
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MyLoginPage(title: "Home"),));
+            builder: (context) => HomePage(),));
         }else {
           Fluttertoast.showToast(msg: 'Not Found');
         }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studentsportal/login.dart';
+import 'package:studentsportal/pages/login_page.dart';
+// import 'package:google_fonts/google_fonts.dart';
+import 'logintemp.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+                 // fontFamily: GoogleFonts.poppins().fontFamily,
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -67,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 sh.setString("imageurl", "http://"+ipaddress.text+":8000").toString();
 
                 Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MyLoginPage(title: "Home"),));
-                Fluttertoast.showToast(msg: 'hhhh');
+                  builder: (context) => LoginPage(),));
+                Fluttertoast.showToast(msg: 'ip connected successfully');
 
               }, child: Text('connect'))
             ],
