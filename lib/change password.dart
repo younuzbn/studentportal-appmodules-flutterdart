@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studentsportal/login.dart';
 import 'package:studentsportal/pages/daily_page.dart';
+import 'package:studentsportal/pages/login_page.dart';
 import 'package:studentsportal/send%20complaint.dart';
 import 'package:studentsportal/styles/app_colors.dart';
 import 'package:studentsportal/theme/colors.dart';
@@ -59,6 +60,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   TextEditingController currentcontroller=new TextEditingController();
   TextEditingController newcontroller=new TextEditingController();
   TextEditingController confirmcontroller=new TextEditingController();
+  final formkey = GlobalKey<FormState>();
 
 
 
@@ -80,33 +82,60 @@ class _ChangePasswordState extends State<ChangePassword> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                 TextFormField(
-                   controller: currentcontroller,
-                   decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Current Password')),
-                 ),
-                  SizedBox(height: 15,),
-                  TextFormField(
-                    controller: newcontroller,
-                    decoration: InputDecoration(border: OutlineInputBorder(),label: Text('New Password')),
-                  ),
-                  SizedBox(height: 15,),
-                  TextFormField(
-                    controller: confirmcontroller,
-                    decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Confirm Password')),
-                  ),
-                  SizedBox(height: 15,),
-                  ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
-                        side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
-                      ),
-                      onPressed: (){_send_data();}, child: Text(
-                      'Send Complaint',
-                      style: TextStyle(color: Colors.black)))
-                ],
+              child: Form(
+                key: formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                   TextFormField(
+                     validator: (value){
+                       if (value!.isEmpty){
+                         return "Please Enter Your Current Password";
+                       }
+                       return null;
+                     },
+                     controller: currentcontroller,
+                     decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Current Password')),
+                   ),
+                    SizedBox(height: 15,),
+                    TextFormField(
+                      validator: (value){
+                        if (value!.isEmpty){
+                          return "Please Enter Your New Password";
+                        }
+                        return null;
+                      },
+                      controller: newcontroller,
+                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('New Password')),
+                    ),
+                    SizedBox(height: 15,),
+                    TextFormField(
+                      validator: (value){
+                        if (value!.isEmpty){
+                          return "Please Confirm Your Password";
+                        }
+                        if (value!=newcontroller.text){
+                          return "Password Does not Match";
+                        }
+                        return null;
+                      },
+                      controller: confirmcontroller,
+                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Confirm Password')),
+                    ),
+                    SizedBox(height: 15,),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                          side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                        ),
+                        onPressed: (){
+                          if (formkey.currentState!.validate()){
+
+                          _send_data();}}, child: Text(
+                        'Update Password',
+                        style: TextStyle(color: Colors.black)))
+                  ],
+                ),
               ),
             ),
           ),
@@ -176,7 +205,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
 
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MyLoginPage(title: "Home"),));
+            builder: (context) => LoginPage(),));
         }else {
           Fluttertoast.showToast(msg: 'Not Found');
         }

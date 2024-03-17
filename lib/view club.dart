@@ -66,6 +66,7 @@ class _ViewClubState extends State<ViewClub> {
 
 
             title: Text("Join Club"),
+            centerTitle: true,
           ),
           body: Container(
             color: Colors.white, // Set background color to light blue

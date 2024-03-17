@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'package:http/http.dart'as http;
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,9 +14,89 @@ import 'package:studentsportal/pages/login_page.dart';
 import 'package:studentsportal/send%20id%20card%20request.dart';
 import 'package:studentsportal/theme/colors.dart';
 import 'package:icon_badge/icon_badge.dart';
+import 'package:studentsportal/view%20notification.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../send bus pass request.dart';
 import '../view attendance.dart';
+import '../view reply.dart';
+
+void main(){
+  WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(
+
+    // The top level function, aka callbackDispatcher
+      callbackDispatcher,
+
+      // If enabled it will post a notification whenever
+      // the task is running. Handy for debugging tasks
+      isInDebugMode: true);
+// Periodic task registration
+  Workmanager().registerPeriodicTask(
+    "2",
+
+    //This is the value that will be
+    // returned in the callbackDispatcher
+    "simplePeriodicTask",
+
+    // When no frequency is provided
+    // the default 15 minutes is set.
+    // Minimum frequency is 15 min.
+    // Android will automatically change
+    // your frequency to 15 min
+    // if you have configured a lower frequency.
+    frequency: Duration(seconds: 15),
+  );
+  runApp(mydaily());
+}
+
+class mydaily extends StatelessWidget {
+  const mydaily({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+void callbackDispatcher(String message) {
+  print("hiii");
+
+  // Workmanager().executeTask((task, inputData) {
+  // initialise the plugin of flutterlocalnotifications.
+  FlutterLocalNotificationsPlugin flip =
+  new FlutterLocalNotificationsPlugin();
+
+  // app_icon needs to be a added as a drawable
+  // resource to the Android head project.
+  var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+  // var IOS = new IOSInitializationSettings();
+
+  // initialise settings for both Android and iOS device.
+  var settings = new InitializationSettings(android: android);
+  flip.initialize(settings);
+  _showNotificationWithDefaultSound(flip, message);
+  // return Future.value(true);
+  // });
+}
+
+Future _showNotificationWithDefaultSound(flip,String message) async {
+// Show a notification after every 15 minute with the first
+// appearance happening a minute after invoking the method
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id', 'your channel name',
+      importance: Importance.max, priority: Priority.high);
+
+// initialise channel platform for both Android and iOS device.
+  var platformChannelSpecifics =
+  new NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flip.show(
+      0,
+      'New Notification',
+      message,
+      platformChannelSpecifics,
+      payload: 'Default_Sound');
+}
+
 
 class DailyPage extends StatefulWidget {
   const DailyPage({super.key});
@@ -24,13 +106,20 @@ class DailyPage extends StatefulWidget {
 }
 
 class _DailyPageState extends State<DailyPage> {
+
   _DailyPageState(){
+    Timer.periodic(Duration(seconds: 15), (timer) {
+      getdata();
+    });
     _send_data();
   }
+
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return SafeArea(
+
         child: SingleChildScrollView(
       child: Column(
         children: [
@@ -93,7 +182,7 @@ class _DailyPageState extends State<DailyPage> {
                               height: 10,
                             ),
                             Text(
-                              register_number_,
+                              email_id_,
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -113,17 +202,17 @@ class _DailyPageState extends State<DailyPage> {
                       Column(
                         children: [
                           Text(
-                            "\$8900",
+                            register_number_,
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: black),
                           ),
                           SizedBox(
                             height: 5,
                           ),
                           Text(
-                            "Income",
+                            "Register Number",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w100,
@@ -139,17 +228,17 @@ class _DailyPageState extends State<DailyPage> {
                       Column(
                         children: [
                           Text(
-                            "\$5500",
+                            date_of_birth_,
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: black),
                           ),
                           SizedBox(
                             height: 5,
                           ),
                           Text(
-                            "Expenses",
+                            "Date of Birth",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w100,
@@ -165,17 +254,17 @@ class _DailyPageState extends State<DailyPage> {
                       Column(
                         children: [
                           Text(
-                            "\$890",
+                            admission_year_,
                             style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: black),
                           ),
                           SizedBox(
                             height: 5,
                           ),
                           Text(
-                            "Loan",
+                            "Admission Year",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w100,
@@ -209,13 +298,11 @@ class _DailyPageState extends State<DailyPage> {
                     )),
                     IconBadge(
         icon: Icon(Icons.notifications_none),
-        itemCount: 1,
-        badgeColor: Colors.red,
         itemColor: mainFontColor,
         hideZero: true,
         top: -1,
         onTap: () {
-          print('test');
+         Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewNotification(title: '',)));
         },
       ),
                       ],
@@ -228,7 +315,7 @@ class _DailyPageState extends State<DailyPage> {
                 //       fontSize: 20,
                 //       color: mainFontColor,
                 //     )),
-                Text("Jan 16, 2023",
+                Text(date_,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -533,6 +620,7 @@ class _DailyPageState extends State<DailyPage> {
                       ),
                     ],
                   ),
+
                 ),
               ],
             ),
@@ -542,11 +630,62 @@ class _DailyPageState extends State<DailyPage> {
     ));
   }
 
+  String Reminer = "", id = "", Date = "", Time = "";
+
+  Future<void> getdata() async {
+    SharedPreferences sh = await SharedPreferences.getInstance();
+    try {
+      // String url = "${sh.getString("url").toString()}/viewNotification/";
+
+
+      String url = sh.getString('url').toString();
+
+      final urls = Uri.parse('$url/view_push_notification/');
+
+      String nid="0";
+      if(sh.containsKey("nid")==false) {}
+      else{
+        nid=sh.getString('nid').toString();
+      }
+      Fluttertoast.showToast(msg:nid);
+
+      var datas = await http
+          .post(urls, body: {'nid': nid });
+      var jsondata = json.decode(datas.body);
+      String status = jsondata['status'];
+      print(status);
+      if (status == "ok") {
+        String nid = jsondata['nid'].toString();
+        String message = jsondata['message'];
+        sh.setString('nid',nid);
+        callbackDispatcher(message);
+        // var data = json.decode(datas.body)['data'];
+        // setState(() {
+        //   for (int i = 0; i < data.length; i++) {
+        //     Reminer = (data[i]['Reminder'].toString());
+        //     id = (data[i]['id'].toString());
+        //     Date = (data[i]['Date']);
+        //     Time = (data[i]['Time']);
+        //   }
+        // });
+
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+      print("Error ------------------- " + e.toString());
+      //there is error during converting file image to base64 encoding.
+    }
+  }
+
 
 
   String name_="";
   String photo_="";
   String register_number_="";
+  String date_="";
+  String email_id_="";
+  String date_of_birth_="";
+  String admission_year_="";
 
   void _send_data() async{
 
@@ -571,11 +710,19 @@ class _DailyPageState extends State<DailyPage> {
           String name=jsonDecode(response.body)['name'];
           String photo=imageurl+jsonDecode(response.body)['photo'];
           String register_number=jsonDecode(response.body)['register_number'];
+          String email_id=jsonDecode(response.body)['email_id'];
+          String date=jsonDecode(response.body)['date'].toString();
+          String admission_year=jsonDecode(response.body)['admission_year'].toString();
+          String date_of_birth=jsonDecode(response.body)['date_of_birth'].toString();
           setState(() {
 
             name_= name;
             photo_= photo;
             register_number_= register_number;
+            date_= date;
+            email_id_= email_id;
+            admission_year_= admission_year;
+            date_of_birth_= date_of_birth;
           });
 
 

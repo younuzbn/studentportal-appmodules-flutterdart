@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studentsportal/pages/home_page.dart';
 import 'package:studentsportal/styles/app_colors.dart';
+import 'package:studentsportal/viewidcardrequest.dart';
 
 import 'home.dart';
 import 'login.dart';
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
 
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
       home: const SendIdCardRequest(title: 'Students Portal'),
@@ -47,6 +49,7 @@ class SendIdCardRequest extends StatefulWidget {
 class _SendIdCardRequestState extends State<SendIdCardRequest> {
   TextEditingController department=new TextEditingController();
   TextEditingController academicyear=new TextEditingController();
+  final formkey = GlobalKey<FormState>();
 
   _SendIdCardRequestState(){
     viewreply();
@@ -62,11 +65,18 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
       },
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => ViewIDCardRequest(title: '',),));
+            }, icon: Icon(Icons.inbox))
+          ],
           backgroundColor:Colors.white,
 
           // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-          title: Text(widget.title),
+          title: Text("ID Card Request"),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -75,58 +85,85 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
 
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    if (_selectedImage != null) ...{
-                      InkWell(
-                        child:
-                        Image.file(_selectedImage!, height: 400,),
-                        radius: 399,
-                        onTap: _checkPermissionAndChooseImage,
-                        // borderRadius: BorderRadius.all(Radius.circular(200)),
-                      ),
-                    } else ...{
-                      // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
-                      InkWell(
-                        onTap: _checkPermissionAndChooseImage,
-                        child:Column(
-                          children: [
-                            Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
-                            Text('Select Image',style: TextStyle(color: Colors.cyan))
-                          ],
+                child: Form(
+                  key: formkey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      if (_selectedImage != null) ...{
+                        InkWell(
+                          child:
+                          Image.file(_selectedImage!, height: 400,),
+                          radius: 399,
+                          onTap: _checkPermissionAndChooseImage,
+                          // borderRadius: BorderRadius.all(Radius.circular(200)),
                         ),
-                      ),
-                    },
-                    DropdownMenu<String>(
-                      initialSelection: department_.first,
-                      onSelected: (String? value) {
-                        // This is called when the user selects an item.
-                        setState(() {
-
-                          selectedvalue = id_[department_.indexOf(value!)].toString();
-                          department.text = selectedvalue;
-                        });
+                      } else ...{
+                        // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
+                        InkWell(
+                          onTap: _checkPermissionAndChooseImage,
+                          child:Column(
+                            children: [
+                              Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
+                              Text('Select Image',style: TextStyle(color: Colors.cyan))
+                            ],
+                          ),
+                        ),
                       },
-                      dropdownMenuEntries: department_.map<DropdownMenuEntry<String>>((String value) {
-                        return DropdownMenuEntry<String>(value: value, label: value);
-                      }).toList(),
-                    ),
-                    SizedBox(height: 15,),
-                    TextFormField(
-                      controller: academicyear,
-                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
-                    ),
+                      // DropdownMenu<String>(
+                      //   initialSelection: department_.first,
+                      //   onSelected: (String? value) {
+                      //     // This is called when the user selects an item.
+                      //     setState(() {
+                      //
+                      //       selectedvalue = id_[department_.indexOf(value!)].toString();
+                      //       department.text = selectedvalue;
+                      //     });
+                      //   },
+                      //   dropdownMenuEntries: department_.map<DropdownMenuEntry<String>>((String value) {
+                      //     return DropdownMenuEntry<String>(value: value, label: value);
+                      //   }).toList(),
+                      // ),
+                      SizedBox(height: 15,),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        validator: (value){
+                          String t = value!.trim();
+                          if (t.isEmpty){
+                            return "Please Enter Your Year";
+                          }
+                          return null;
+                        },
+                        controller: academicyear,
+                        decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
+                      ),
 
-                    SizedBox(height: 15,),
-                    ElevatedButton(style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
-                      side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
-                    ), onPressed: (){_send_data();}, child: Text(
-                'Sent Request',
-                style: TextStyle(color: Colors.black), // Set text color to black
-              ),)
-                  ],
+                      SizedBox(height: 15,),
+                      ElevatedButton(style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                        side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                      ), onPressed: (){
+
+                        if (photo.length==0){
+                          Fluttertoast.showToast(msg: "Please Select an Image");
+
+                        }
+                        else if (formkey.currentState!.validate()){
+
+                        _send_data();
+
+                      }
+                        else{
+                          return null;
+                        }
+
+                        }, child: Text(
+                  'Send Request',
+                  style: TextStyle(color: Colors.black), // Set text color to black
+                                ),)
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -147,7 +184,7 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
     final urls = Uri.parse('$url/send_id_card_request/');
     try {
       final response = await http.post(urls, body: {
-        'department':department.text,
+        // 'department':department.text,
         'academic_year':academicyear.text,
         'photo':photo,
         'lid':lid,
@@ -161,7 +198,7 @@ class _SendIdCardRequestState extends State<SendIdCardRequest> {
 
 
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => pagenew(title: "Home"),));
+            builder: (context) => HomePage(),));
         }else {
           Fluttertoast.showToast(msg: 'Not Found');
         }

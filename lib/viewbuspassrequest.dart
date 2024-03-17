@@ -3,7 +3,6 @@ import 'package:http/http.dart'as http;
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:studentsportal/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,24 +21,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ViewClubRequestStatus(title: 'Students Portal'),
+      home: const ViewBusPassRequest(title: 'Students Portal'),
     );
   }
 }
 
-class ViewClubRequestStatus extends StatefulWidget {
-  const ViewClubRequestStatus({super.key, required this.title});
+class ViewBusPassRequest extends StatefulWidget {
+  const ViewBusPassRequest({super.key, required this.title});
 
 
   final String title;
 
   @override
-  State<ViewClubRequestStatus> createState() => _ViewClubRequestStatusState();
+  State<ViewBusPassRequest> createState() => _ViewBusPassRequestState();
 }
 
-class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
-  _ViewClubRequestStatusState(){
-    viewreply();
+class _ViewBusPassRequestState extends State<ViewBusPassRequest> {
+  _ViewBusPassRequestState(){
+    getdata();
   }
 
 
@@ -52,16 +51,10 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
-            },
-          ),
 
-          backgroundColor:Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-          title: Text("My Club"),
-          centerTitle: true,
+          title: Text(widget.title),
         ),
         body:
         Container(
@@ -86,7 +79,7 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox( // Wrap the card with SizedBox
-                                height: 180, // Set the desired height of the card
+                                height: 140, // Set the desired height of the card
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,7 +90,7 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
                                         width: 90, // Set width of the image
                                         height: 90, // Set height of the image
                                         child: Image.network(
-                                          logo_[index],
+                                          photo_[index],
                                           fit: BoxFit.cover, // Adjust the image to cover the entire space
                                         ),
                                       ),
@@ -108,25 +101,37 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            CLUB_[index],
+                                            status_[index],
                                             style: TextStyle(
                                               fontSize: 25,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           SizedBox(height: 12),
-                                          Text(
-                                            description_[index],
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                          SizedBox(height: 10),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("Status:"),
-                                              Text(Status_[index])
+                                              Text("From Location:"),
+                                              Text(from_location_[index])
                                             ],
-                                          )
+                                          ),
+                                          SizedBox(height: 12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("To Location:"),
+                                              Text(to_location_[index])
+                                            ],
+                                          ),
+                                          SizedBox(height: 12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Academic Year:"),
+                                              Text(academic_year_[index])
+                                            ],
+                                          ),
+
                                         ],
                                       ),
                                     ),
@@ -145,29 +150,85 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
           ),
         ),
 
+        // ListView.builder(
+        //   physics: BouncingScrollPhysics(),
+        //   itemCount: id_.length,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     return ListTile(
+        //       title: Padding(
+        //           padding: const EdgeInsets.all(8.0),
+        //           child: Column(
+        //             children: [
+        //               Card(
+        //                 child:
+        //                 Row(
+        //                     children: [
+        //                       Column(
+        //                         children: [
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(date_[index]),
+        //                           ),
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(photo_[index]),
+        //                           ),    Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(status_[index]),
+        //                           ),  Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(from_location_[index]),
+        //                           ),
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(to_location_[index]),
+        //                           ),
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(academic_year_[index]),
+        //                           ),
+        //                         ],
+        //                       ),
+        //
+        //                     ]
+        //                 ),
+        //
+        //                 elevation: 8,
+        //                 margin: EdgeInsets.all(10),
+        //               ),
+        //             ],
+        //           )),
+        //     );
+        //   },
+        // ),
+
       ),
     );
   }
-  List<String> id_=<String>[];
-  List<String> CLUB_=<String>[];
-  List<String> logo_=<String>[];
-  List<String> description_=<String>[];
-  List<String> date_=<String>[];
-  List<String> Status_=<String>[];
 
-  Future<void> viewreply() async {
-    List<String> id=<String>[];
-    List<String> CLUB=<String>[];
-    List<String> logo=<String>[];
-    List<String> description=<String>[];
-    List<String> date=<String>[];
-    List<String> Status=<String>[];
+  List<String> id_=<String>[];
+  List<String> date_=<String>[];
+  List<String> photo_=<String>[];
+  List<String> status_=<String>[];
+  List<String> from_location_=<String>[];
+  List<String> to_location_=<String>[];
+  List<String> academic_year_=<String>[];
+
+  Future<void> getdata() async {
+    List<String> id = <String>[];
+    List<String> date = <String>[];
+    List<String> from_location = <String>[];
+    List<String> to_location = <String>[];
+    List<String> photo = <String>[];
+    List<String> status = <String>[];
+    List<String> academic_year = <String>[];
+
 
     try {
       SharedPreferences sh = await SharedPreferences.getInstance();
       String urls = sh.getString('url').toString();
       String lid = sh.getString('lid').toString();
-      String url = '$urls/view_club_request_status/';
+      String url = '$urls/view_bus_pass_request_student/';
 
       var data = await http.post(Uri.parse(url), body: {
 
@@ -184,20 +245,21 @@ class _ViewClubRequestStatusState extends State<ViewClubRequestStatus> {
       for (int i = 0; i < arr.length; i++) {
         id.add(arr[i]['id'].toString());
         date.add(arr[i]['date'].toString());
-        logo.add(sh.getString("imageurl").toString()+arr[i]['logo'].toString());
-        description.add(arr[i]['description'].toString());
-        CLUB.add(arr[i]['CLUB'].toString());
-        Status.add(arr[i]['status'].toString());
+        photo.add(sh.getString("imageurl").toString()+arr[i]['photo'].toString());
+        from_location.add(arr[i]['from_location'].toString());
+        to_location.add(arr[i]['to_location'].toString());
+        academic_year.add(arr[i]['academic_year'].toString());
+        status.add(arr[i]['status'].toString());
       }
 
       setState(() {
         id_ = id;
         date_ = date;
-        logo_ = logo;
-        description_ = description;
-        CLUB_ = CLUB;
-        date_ = date;
-        Status_ = Status;
+        photo_ = photo;
+        from_location_ = from_location;
+        to_location_ = to_location;
+        academic_year_ = academic_year;
+        status_ = status;
       });
 
       print(statuss);

@@ -56,49 +56,130 @@ class _ViewReplyState extends State<ViewReply> {
 
           title: Text(widget.title),
         ),
-        body:  ListView.builder(
-          physics: BouncingScrollPhysics(),
-          itemCount: id_.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Card(
-                        child:
-                        Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(date_[index]),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(reply_[index]),
-                                  ),    Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(status_[index]),
-                                  ),  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(complaint_[index]),
-                                  ),
-                                ],
-                              ),
+        body:
+        Container(
+          color: Colors.white,
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: id_.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black), // Add black border
+                            borderRadius: BorderRadius.circular(10), // Set border radius
+                          ),
+                          child: Card(
+                            elevation: 0,
+                            color: Colors.white, // Set card color to white
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox( // Wrap the card with SizedBox
+                                height: 180, // Set the desired height of the card
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // ClipRRect(
+                                    //   borderRadius: BorderRadius.circular(10), // Set border radius
+                                    //   child: SizedBox(
+                                    //     width: 90, // Set width of the image
+                                    //     height: 90, // Set height of the image
+                                    //     child: Image.network(
+                                    //       logo_[index],
+                                    //       fit: BoxFit.cover, // Adjust the image to cover the entire space
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            date_[index],
+                                            style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),
+                                          Text(
+                                            complaint_[index],
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          SizedBox(height: 10),
+                                         Text(
+                                            reply_[index],
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          SizedBox(height: 10),
 
-                            ]
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            margin: EdgeInsets.all(10),
+                          ),
                         ),
 
-                        elevation: 8,
-                        margin: EdgeInsets.all(10),
-                      ),
-                    ],
-                  )),
-            );
-          },
+                      ],
+                    )),
+              );
+            },
+          ),
         ),
+
+        // ListView.builder(
+        //   physics: BouncingScrollPhysics(),
+        //   itemCount: id_.length,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     return ListTile(
+        //       title: Padding(
+        //           padding: const EdgeInsets.all(8.0),
+        //           child: Column(
+        //             children: [
+        //               Card(
+        //                 child:
+        //                 Row(
+        //                     children: [
+        //                       Column(
+        //                         children: [
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(date_[index]),
+        //                           ),
+        //                           Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(reply_[index]),
+        //                           ),    Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(status_[index]),
+        //                           ),  Padding(
+        //                             padding: EdgeInsets.all(5),
+        //                             child: Text(complaint_[index]),
+        //                           ),
+        //                         ],
+        //                       ),
+        //
+        //                     ]
+        //                 ),
+        //
+        //                 elevation: 8,
+        //                 margin: EdgeInsets.all(10),
+        //               ),
+        //             ],
+        //           )),
+        //     );
+        //   },
+        // ),
 
       ),
     );

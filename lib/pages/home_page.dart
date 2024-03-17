@@ -9,6 +9,7 @@ import 'package:studentsportal/send%20complaint.dart';
 import 'package:studentsportal/theme/colors.dart';
 import 'package:studentsportal/view%20club%20request%20status.dart';
 
+import '../cmchat.dart';
 import '../view club.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   
 List<Widget> pages = [
     DailyPage(),
-    SendComplaint(title: '',),
+    ChatPage(),
     ViewClub(title:'', ),
     ViewClubRequestStatus(title: '',),
     // ViewClubRequestStatus(title: '',),
@@ -33,6 +34,7 @@ List<Widget> pages = [
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: primary,
       body: getBody(),
       bottomNavigationBar: getFooter(),

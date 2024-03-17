@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studentsportal/pages/home_page.dart';
 import 'package:studentsportal/styles/app_colors.dart';
+import 'package:studentsportal/viewbuspassrequest.dart';
 
 import 'home.dart';
 import 'login.dart';
@@ -50,6 +51,7 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
   TextEditingController fromlocation=new TextEditingController();
   TextEditingController tolocation=new TextEditingController();
   TextEditingController academicyear=new TextEditingController();
+  final formkey = GlobalKey<FormState>();
 
 
   _SendBusPassRequestState(){
@@ -64,11 +66,18 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
       },
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => ViewBusPassRequest(title: '',),));
+            }, icon: Icon(Icons.inbox))
+          ],
           backgroundColor: AppColors.my_white,
 
           // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
-          title: Text(widget.title),
+          title: Text("Bus Pass Request"),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -77,69 +86,106 @@ class _SendBusPassRequestState extends State<SendBusPassRequest> {
 
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    if (_selectedImage != null) ...{
-                      InkWell(
-                        child:
-                        Image.file(_selectedImage!, height: 400,),
-                        radius: 399,
-                        onTap: _checkPermissionAndChooseImage,
-                        // borderRadius: BorderRadius.all(Radius.circular(200)),
-                      ),
-                    } else ...{
-                      // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
-                      InkWell(
-                        onTap: _checkPermissionAndChooseImage,
-                        child:Column(
-                          children: [
-                            Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
-                            Text('Select Image',style: TextStyle(color: Colors.cyan))
-                          ],
+                child: Form(
+                  key: formkey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      if (_selectedImage != null) ...{
+                        InkWell(
+                          child:
+                          Image.file(_selectedImage!, height: 400,),
+                          radius: 399,
+                          onTap: _checkPermissionAndChooseImage,
+                          // borderRadius: BorderRadius.all(Radius.circular(200)),
                         ),
-                      ),
-                    },
-                    DropdownMenu<String>(
-                      initialSelection: department_.first,
-                      onSelected: (String? value) {
-                        // This is called when the user selects an item.
-                        setState(() {
-
-                          selectedvalue = id_[department_.indexOf(value!)].toString();
-                          department.text = selectedvalue;
-                        });
+                      } else ...{
+                        // Image(image: NetworkImage(),height: 100, width: 70,fit: BoxFit.cover,),
+                        InkWell(
+                          onTap: _checkPermissionAndChooseImage,
+                          child:Column(
+                            children: [
+                              Image(image: NetworkImage('https://cdn.pixabay.com/photo/2017/11/10/05/24/select-2935439_1280.png'),height: 200,width: 200,),
+                              Text('Select Image',style: TextStyle(color: Colors.cyan))
+                            ],
+                          ),
+                        ),
                       },
-                      dropdownMenuEntries: department_.map<DropdownMenuEntry<String>>((String value) {
-                        return DropdownMenuEntry<String>(value: value, label: value);
-                      }).toList(),
-                    ),
-                    SizedBox(height: 15,),
-                    TextFormField(
-                      controller: fromlocation,
-                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('From Location')),
-                    ),
-                    SizedBox(height: 15,),
-                    TextFormField(
-                      controller: tolocation,
-                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('To Location')),
-                    ),
-                    SizedBox(height: 15,),
-                    TextFormField(
-                      controller: academicyear,
-                      decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
-                    ),
-                    SizedBox(height: 15,),
+                      // DropdownMenu<String>(
+                      //   initialSelection: department_.first,
+                      //   onSelected: (String? value) {
+                      //     // This is called when the user selects an item.
+                      //     setState(() {
+                      //
+                      //       selectedvalue = id_[department_.indexOf(value!)].toString();
+                      //       department.text = selectedvalue;
+                      //     });
+                      //   },
+                      //   dropdownMenuEntries: department_.map<DropdownMenuEntry<String>>((String value) {
+                      //     return DropdownMenuEntry<String>(value: value, label: value);
+                      //   }).toList(),
+                      // ),
+                      SizedBox(height: 15,),
+                      TextFormField(
+                        validator: (value){
+                          String t = value!.trim();
+                          if (t.isEmpty){
+                            return "Please Enter From Location";
+                          }
+                          return null;
+                        },
+                        controller: fromlocation,
+                        decoration: InputDecoration(border: OutlineInputBorder(),label: Text('From Location')),
+                      ),
+                      SizedBox(height: 15,),
+                      TextFormField(
+                        validator: (value){
+                          String t = value!.trim();
+                          if (t.isEmpty){
+                            return "Please Enter to Location";
+                          }
+                          return null;
+                        },
+                        controller: tolocation,
+                        decoration: InputDecoration(border: OutlineInputBorder(),label: Text('To Location')),
+                      ),
+                      SizedBox(height: 15,),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        validator: (value){
+                          String t = value!.trim();
+                          if (t.isEmpty){
+                            return "Please Enter Your Year";
+                          }
+                          return null;
+                        },
+                        controller: academicyear,
+                        decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Academic Year')),
+                      ),
+                      SizedBox(height: 15,),
 
 
-                    ElevatedButton(style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
-                      side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
-                    ), onPressed: (){_send_data();}, child: Text(
-                      'Join Club',
-                      style: TextStyle(color: Colors.black), // Set text color to black
-                    ),)
-                  ],
+                      ElevatedButton(style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                        side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                      ), onPressed: (){if (photo.length==0){
+                        Fluttertoast.showToast(msg: "Please Select an Image");
+
+                      }
+                      else if (formkey.currentState!.validate()){
+
+                        _send_data();
+
+                      }
+                      else{
+                        return null;
+                      }}, child: Text(
+                        'Send Request',
+                        style: TextStyle(color: Colors.black), // Set text color to black
+                      ),)
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -44,6 +44,7 @@ class SendComplaint extends StatefulWidget {
 
 class _SendComplaintState extends State<SendComplaint> {
   TextEditingController complaint=new TextEditingController();
+  final formkey = GlobalKey<FormState>();
 
 
   @override
@@ -56,6 +57,11 @@ class _SendComplaintState extends State<SendComplaint> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.my_white,
+          actions: [
+            IconButton(onPressed: (){
+
+            }, icon: Icon(Icons.message))
+          ],
           leading: BackButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
@@ -69,25 +75,35 @@ class _SendComplaintState extends State<SendComplaint> {
         body: Container(
           decoration: BoxDecoration(color: AppColors.my_white),
           child: Center(
-
-
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                 TextFormField(
-                   controller: complaint,
-                   decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Enter Your Complaint')),
-                 ),
-                  SizedBox(height: 15,),
-                  ElevatedButton(onPressed: (){_send_data();},style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
-                    side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
-                  ), child: Text(
-                      'Send Complaint',
-                      style: TextStyle(color: Colors.black)))
-                ],
+              child: Form(
+                key: formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                   TextFormField(
+                     validator: (value){
+                       // String t = value!.trim();
+                       if (value!.isEmpty){
+                         return "Please Fill Your Complaint";
+                       }
+                       return null;
+                     },
+                     controller: complaint,
+                     decoration: InputDecoration(border: OutlineInputBorder(),label: Text('Enter Your Complaint')),
+                   ),
+                    SizedBox(height: 15,),
+                    ElevatedButton(onPressed: (){
+                    if (formkey.currentState!.validate()){
+                      _send_data();}},style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white), // Set button color to white
+                      side: MaterialStateProperty.all(BorderSide(color: Colors.black)), // Set border color to black
+                    ), child: Text(
+                        'Send Complaint',
+                        style: TextStyle(color: Colors.black)))
+                  ],
+                ),
               ),
             ),
           ),

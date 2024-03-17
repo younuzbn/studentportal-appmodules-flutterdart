@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:studentsportal/styles/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,52 +53,135 @@ class _ViewAttendanceState extends State<ViewAttendance> {
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: AppColors.my_white,
+          actions: [
+            IconButton(
+              onPressed: () async {
+                // Set an initial date
+                DateTime initialDate = DateTime.now();
 
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                // Open a date picker with the initial date
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: initialDate,
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
 
-          title: Text(widget.title),
+                );
+
+                // Handle the selected date as needed
+                if (pickedDate != null) {
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  print('Selected Date: ${formattedDate}');
+                  final sh =await SharedPreferences.getInstance();
+                  sh.setString("date", formattedDate);
+                  viewreply2();
+                  Fluttertoast.showToast(msg: '${formattedDate}');
+                  // You can perform actions with the selected date here
+                }
+              },
+              splashRadius: 1.0,
+              icon: Icon(
+                Icons.calendar_month,
+                color: Colors.black,
+                size: 34.0,
+              ),
+            ),
+          ],
+
+          // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
+          title: Text("Attendance"),
+          centerTitle: true,
         ),
-        body:  ListView.builder(
-          physics: BouncingScrollPhysics(),
-          itemCount: id_.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Card(
-                        child:
-                        Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(date_[index]),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(subject_[index]),
-                                  ),    Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(hour_[index]),
-                                  ),Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(status_[index]),
-                                  ),
-                                ],
-                              ),
+        body:  Container(
+          color: Colors.white,
+          child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: id_.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black), // Add black border
+                            borderRadius: BorderRadius.circular(10), // Set border radius
+                          ),
+                          child: Card(
+                            elevation: 0,
+                            color: Colors.white, // Set card color to white
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox( // Wrap the card with SizedBox
+                                height: 180, // Set the desired height of the card
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // ClipRRect(
+                                    //   borderRadius: BorderRadius.circular(10), // Set border radius
+                                    //   child: SizedBox(
+                                    //     width: 90, // Set width of the image
+                                    //     height: 90, // Set height of the image
+                                    //     child: Image.network(
+                                    //       logo_[index],
+                                    //       fit: BoxFit.cover, // Adjust the image to cover the entire space
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            date_[index],
+                                            style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),Text(
+                                            subject_[index],
+                                            style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),Text(
+                                            hour_[index],
+                                            style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 12),
+                                          Text(
+                                            status_[index],
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          SizedBox(height: 10),
 
-                            ]
+
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            margin: EdgeInsets.all(10),
+                          ),
                         ),
 
-                        elevation: 8,
-                      ),
-                    ],
-                  )),
-            );
-          },
+                      ],
+                    )),
+              );
+            },
+          ),
         ),
 
       ),
@@ -125,6 +210,56 @@ class _ViewAttendanceState extends State<ViewAttendance> {
       var data = await http.post(Uri.parse(url), body: {
 
         'lid':lid
+
+      });
+      var jsondata = json.decode(data.body);
+      String statuss = jsondata['status'];
+
+      var arr = jsondata["data"];
+
+      print(arr.length);
+
+      for (int i = 0; i < arr.length; i++) {
+        id.add(arr[i]['id'].toString());
+        subject.add(arr[i]['subject']);
+        date.add(arr[i]['date']);
+        hour.add(arr[i]['hour']);
+        status.add(arr[i]['status']);
+      }
+
+      setState(() {
+        id_ = id;
+        subject_ = subject;
+        date_ = date;
+        hour_ = hour;
+        status_ = status;
+      });
+
+      print(statuss);
+    } catch (e) {
+      print("Error ------------------- " + e.toString());
+      //there is error during converting file image to base64 encoding.
+    }
+  }
+  Future<void> viewreply2() async {
+    List<String> id=<String>[];
+    List<String> subject=<String>[];
+    List<String> date=<String>[];
+    List<String> hour=<String>[];
+    List<String> status=<String>[];
+
+
+    try {
+      SharedPreferences sh = await SharedPreferences.getInstance();
+      String urls = sh.getString('url').toString();
+      String lid = sh.getString('lid').toString();
+      String date1 = sh.getString('date').toString();
+      String url = '$urls/view_attendancesea/';
+
+      var data = await http.post(Uri.parse(url), body: {
+
+        'lid':lid,
+        'date':date1,
 
       });
       var jsondata = json.decode(data.body);
