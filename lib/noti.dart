@@ -139,7 +139,7 @@ class _NotiPageState extends State<NotiPage> {
       else{
         nid=sh.getString('nid').toString();
       }
-      Fluttertoast.showToast(msg:nid);
+      // Fluttertoast.showToast(msg:nid);
 
       var datas = await http
           .post(urls, body: {'nid': nid });
@@ -163,7 +163,7 @@ class _NotiPageState extends State<NotiPage> {
 
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: e.toString());
+      // Fluttertoast.showToast(msg: e.toString());
       print("Error ------------------- " + e.toString());
       //there is error during converting file image to base64 encoding.
     }
